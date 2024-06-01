@@ -45,7 +45,7 @@
 
 ### Random_Gen: automatic generate mask as pos_img.
 
-- Automatically draw mask for pos_img based on the number of text("string"). With this checked the pos_img dosen't work
+- Automatically generate mask as pos_img based on the number of text-content("string"). With this checked the pos_img input dosen't work.
 
 ### comfy_mask_pos_img:
 

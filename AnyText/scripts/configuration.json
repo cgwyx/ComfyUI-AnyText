@@ -1,0 +1,1 @@
+{"framework":"pytorch","task":"my-anytext-task","model":{"type":"anytext-model"},"pipeline":{"type":"anytext-pipeline"},"allow_remote":true}

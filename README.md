@@ -6,7 +6,7 @@
 - AnyText model will automaticlly download into "ComfyUI\models\checkpoints\15\anytext_v1.1.safetensors" from huggingface(fp16: 2.66 GB) when first time executing the node if the model file dose not exist.
 - You can download [AnyText-FP32-5.73 GB](https://modelscope.cn/models/iic/cv_anytext_text_generation_editing/file/view/master?fileName=anytext_v1.1.ckpt&status=2) from modelscope,(fp32 5.73 GB).Then put it into **ComfyUI\models\checkpoints\15**.
 - Or manually download [AnyText-FP16-2.66 GB](https://huggingface.co/Sanster/AnyText/blob/main/pytorch_model.fp16.safetensors) from huggingface and rename it to **anytext_v1.1.safetensors**.Then put it into **ComfyUI\models\checkpoints\15**.
-- clip model [**clip-vit-large-patch14**](https://huggingface.co/openai/clip-vit-large-patch14) will automaticlly download into **C:\Users\username\.cache\huggingface\hub**.
+- clip model [**clip-vit-large-patch14**](https://huggingface.co/openai/clip-vit-large-patch14) will automaticlly download into `C:\Users\username\.cache\huggingface\hub`.
 - You can manually download [clip_model](https://huggingface.co/openai/clip-vit-large-patch14) into **ComfyUI\models\clip**
 
 ![](./AnyText/assets/clip_model.jpg)

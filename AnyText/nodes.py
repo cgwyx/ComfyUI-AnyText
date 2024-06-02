@@ -198,7 +198,7 @@ class AnyText:
         n_lines = count_lines(prompt)
         print("\033[93mNumber of text-content to draw(需要生成的文本数量):\033[0m", n_lines)
         ref_image = ori_image
-        print("\033[93mpos_imagg location(遮罩图位置):\033[0m", pos_image)
+        print("\033[93mpos_image location(遮罩图位置):\033[0m", pos_image)
         print("\033[93mori_image location(原图位置):\033[0m", ori_image)
         if Random_Gen == True:
             pos_img = generate_rectangles(width, height, n_lines, max_trys=500)

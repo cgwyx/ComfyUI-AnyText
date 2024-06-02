@@ -17,7 +17,7 @@
 ![](./AnyText/assets/clip_model.jpg)
 
 - A [font-18MB](https://huggingface.co/Sanster/AnyText/blob/main/SourceHanSansSC-Medium.otf) (SourceHanSansSC-Medium.otf) will automatically download into **ComfyUI\models\fonts** from huggingface. It's an essential font that must be in here for check function.
-- If you want to change font, u need to change code in **ComfyUI-AnyText\AnyText\scripts\ms_wrapper.py** line-236. Replace **"SourceHanSansSC-Medium.otf"** with the name of the font you put into **ComfyUI\models\fonts** (including file extension).
+- If you want to change font, u need to change code in **ComfyUI-AnyText\AnyText\scripts\ms_wrapper.py** line-239. Replace **SourceHanSansSC-Medium.otf** with the name of the font you put into **ComfyUI\models\fonts** (including file extension).
 
 ![](./AnyText/assets/font_dir.jpg)
 - **The AnyText model itself is also a standard sd1.5 text2image model.**

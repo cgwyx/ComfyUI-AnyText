@@ -17,7 +17,7 @@
 ![](./AnyText/assets/clip_model.jpg)
 
 - 默认字体[font-18MB](https://huggingface.co/Sanster/AnyText/blob/main/SourceHanSansSC-Medium.otf)(SourceHanSansSC-Medium.otf) 会自动从笑脸(huggingface)下载到**ComfyUI\models\fonts**。这个字体必需，因为用它做了判定函数。
-- 如果你想使用自己的字体，需要修改**ComfyUI-AnyText\AnyText\scripts\ms_wrapper.py**第236行，替换里面的SourceHanSansSC-Medium.otf为自己放到**ComfyUI\models\fonts**的字体名字(包括后缀)。
+- 如果你想使用自己的字体，需要修改**ComfyUI-AnyText\AnyText\scripts\ms_wrapper.py**第239行，替换里面的SourceHanSansSC-Medium.otf为自己放到**ComfyUI\models\fonts**的字体名字(包括后缀)。
 
 ![](./AnyText/assets/font_dir.jpg)
 - **AnyText模型本身是一个标准的sd1.5文生图模型。**

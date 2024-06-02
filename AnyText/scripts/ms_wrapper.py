@@ -220,12 +220,12 @@ class AnyTextModel(TorchModel):
         if not show_debug:
             debug_info = ''
         else:
-            debug_info = f'<span style="color:black;font-size:18px">Prompt: </span>{input_prompt}<br> \
-                           <span style="color:black;font-size:18px">Size: </span>{w}x{h}<br> \
-                           <span style="color:black;font-size:18px">Image Count: </span>{img_count}<br> \
-                           <span style="color:black;font-size:18px">Seed: </span>{seed}<br> \
-                           <span style="color:black;font-size:18px">Use FP16: </span>{self.use_fp16}<br> \
-                           <span style="color:black;font-size:18px">Cost Time: </span>{(time.time()-tic):.2f}s'
+            debug_info = f'\033[93mPrompt(提示词): {input_prompt}\n\033[0m \
+                           \033[93mSize(尺寸): {w}x{h}\n\033[0m \
+                           \033[93mImage Count(生成数量): {img_count}\n\033[0m \
+                           \033[93mSeed(种子): {seed}\n\033[0m \
+                           \033[93mUse FP16(使用FP16): {self.use_fp16}\n\033[0m \
+                           \033[93mCost Time(生成耗时): {(time.time()-tic):.2f}s\033[0m'
         rst_code = 1 if str_warning else 0
         return x_samples, results, rst_code, str_warning, debug_info
 
@@ -233,11 +233,15 @@ class AnyTextModel(TorchModel):
         current_directory = os.path.dirname(folder_paths.models_dir)
         cfg = os.path.join(current_directory, "custom_nodes\ComfyUI-AnyText\AnyText", "anytext_sd15.yaml")
         if os.access(os.path.join(folder_paths.models_dir, "fonts", "SourceHanSansSC-Medium.otf"), os.F_OK):
-            font_path = os.path.join(folder_paths.models_dir, "fonts", "SourceHanSansSC-Medium.otf")
-            # font_path = os.path.join(folder_paths.models_dir, "fonts", "索尼兰亭.ttf")
-            # font_path = os.path.join(folder_paths.models_dir, "fonts", "小篆拼音体.ttf")
-            # font_path = os.path.join(folder_paths.models_dir, "fonts", "日系筑紫a丸GBK版.ttf")
-            # font_path = os.path.join(folder_paths.models_dir, "fonts", "Arial-Unicode.ttf")
+            font_path = os.path.join(
+                folder_paths.models_dir, 
+                "fonts", 
+                "SourceHanSansSC-Medium.otf"
+                # "索尼兰亭.ttf"
+                # "小篆拼音体.ttf"
+                # "日系筑紫a丸GBK版.ttf"
+                # "Arial-Unicode.ttf"
+                )
         else:
             hf_hub_download(repo_id="Sanster/AnyText", filename="SourceHanSansSC-Medium.otf",local_dir=os.path.join(folder_paths.models_dir, "fonts"))
             font_path = os.path.join(folder_paths.models_dir, "fonts", "SourceHanSansSC-Medium.otf")

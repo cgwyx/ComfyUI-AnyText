@@ -64,10 +64,10 @@ class AnyText:
                 "ddim_steps": ("INT", {"default": 20, "min": 1, "max": 100}),
                 "show_debug": ("BOOLEAN", {"default": False}),
                 "seed": ("INT", {"default": 9999, "min": -1, "max": 99999999}),
-                # "width": ("INT", {"default": 512, "min": 512, "max": 1024, "step": 16}),
-                # "height": ("INT", {"default": 512, "min": 512, "max": 1024, "step": 16}),
-                "width": ("INT", {"forceInput": True}),
-                "height": ("INT", {"forceInput": True}),
+                "width": ("INT", {"default": 512, "min": 128, "max": 1920, "step": 64}),
+                "height": ("INT", {"default": 512, "min": 128, "max": 1920, "step": 64}),
+                # "width": ("INT", {"forceInput": True}),
+                # "height": ("INT", {"forceInput": True}),
                 "Random_Gen": ("BOOLEAN", {"default": False}),
                 "strength": ("FLOAT", {
                     "default": 1.00,
@@ -192,43 +192,23 @@ class AnyText:
         #         if os.path.exists(path):
         #             model_path = path
         #             break
+        if width%64 == 0 and height%64 == 0:
+            pass
+        else:
+            raise Exception(f"width and height must be multiple of 64(宽度和高度必须为64的倍数).")
         path = f"{current_directory}\scripts"
-        print("\033[93mBackend scripts location(后端脚本位置):\033[0m", path)
         pipe = pipeline('my-anytext-task', model=path, use_fp16=True, use_translator=False)
         n_lines = count_lines(prompt)
-        print("\033[93mNumber of text-content to draw(需要生成的文本数量):\033[0m", n_lines)
-        ref_image = ori_image
-        print("\033[93mpos_image location(遮罩图位置):\033[0m", pos_image)
-        print("\033[93mori_image location(原图位置):\033[0m", ori_image)
         if Random_Gen == True:
             pos_img = generate_rectangles(width, height, n_lines, max_trys=500)
         else:
             pos_img = pos_image
-        
-        if mode == "text-editing":
-            params = {
-            "mode": mode,
-            "sort_priority": sort_radio,
-            "revise_pos": False,
-            "show_debug": show_debug,
-            "image_count": img_count,
-            "ddim_steps": ddim_steps - 1,
-            "image_width": width,
-            "image_height": height,
-            "strength": strength,
-            "cfg_scale": cfg_scale,
-            "eta": eta,
-            "a_prompt": a_prompt,
-            "n_prompt": n_prompt,
-            }
-            input_data = {
-                "prompt": prompt,
-                "seed": seed,
-                "draw_pos": pos_img,
-                "ori_image": ref_image,
-                }
+        if mode == "text-generation":
+            ori_image = None
+            revise_pos = revise_pos
         else:
-            params = {
+            revise_pos = False
+        params = {
             "mode": mode,
             "sort_priority": sort_radio,
             "revise_pos": revise_pos,
@@ -243,17 +223,25 @@ class AnyText:
             "a_prompt": a_prompt,
             "n_prompt": n_prompt,
             }
-            input_data = {
+        input_data = {
                 "prompt": prompt,
                 "seed": seed,
                 "draw_pos": pos_img,
+                "ori_image": ori_image,
                 }
-        print("\033[93mDraw Order(文本生成优先位置):\033[0m", sort_radio)
-        print("\033[93mrevise_pos set to(位置修正设置):\033[0m", revise_pos)
+        if show_debug ==True:
+            print("\033[93mBackend scripts location(后端脚本位置):", path, "\033[0m")
+            print("\033[93mNumber of text-content to generate(需要生成的文本数量):", n_lines, "\033[0m")
+            print("\033[93mImg Resolution,Max 768x768 Recmmended(图像分辨率,最大建议768x768):", width, "x", height, "\033[0m")
+            print("\033[93mpos_image location(遮罩图位置):", pos_image, "\033[0m")
+            print("\033[93mori_image location(原图位置):", ori_image, "\033[0m")
+            print("\033[93mSort Position(文本生成位置排序):", sort_radio, "\033[0m")
+            print("\033[93mEnable revise_pos(启用位置修正):", revise_pos, "\033[0m")
         x_samples, results, rtn_code, rtn_warning, debug_info = pipe(input_data, **params)
         if rtn_code < 0:
             raise Exception(f"Error in AnyText pipeline: {rtn_warning}")
         output = pil2tensor(x_samples)
+        print("\n", debug_info)
         return(output)
 
 class AnyText_Pose_IMG:
@@ -269,17 +257,17 @@ class AnyText_Pose_IMG:
 
     CATEGORY = "ExtraModels/AnyText"
     RETURN_TYPES = (
-        "INT", 
-        "INT", 
         "STRING", 
         "STRING", 
+        "INT", 
+        "INT", 
         "STRING", 
         "IMAGE")
     RETURN_NAMES = (
-        "width", 
-        "height", 
         "ori_img", 
         "comfy_mask_pos_img", 
+        "width", 
+        "height", 
         "gr_mask_pose_img", 
         "mask_img")
     FUNCTION = "AnyText_Pose_IMG"
@@ -293,6 +281,10 @@ class AnyText_Pose_IMG:
         # width = img.width
         # height = img.height
         width, height = img.size
+        if width%64 == 0 and height%64 == 0:
+            pass
+        else:
+            raise Exception(f"Input pos_img resolution must be multiple of 64(输入的pos_img图片分辨率必须为64的倍数).")
         output_images = []
         output_masks = []
         w, h = None, None
@@ -333,14 +325,14 @@ class AnyText_Pose_IMG:
         inverted_mask_image = invert_mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1])).movedim(1, -1).expand(-1, -1, -1, 3)
         i = 255. * inverted_mask_image.cpu().numpy()[0]
         img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
-        print("\033[93mInput img Resolution,Max 768x768 Recmmended(输入图像分辨率,最大建议768x768):\033[0m", width, "x", height)
+        print("\033[93mInput img Resolution,Max 768x768 Recmmended(输入图像分辨率,最大建议768x768):", width, "x", height, "\033[0m")
         img.save("custom_nodes\ComfyUI-AnyText\AnyText\comfy_mask_pos_img.png")
 
         return (
-            width, 
-            height, 
             image_path, 
             comfy_mask_pos_img_path, 
+            width, 
+            height, 
             gr_mask_pose_image_path, 
             inverted_mask_image)
 

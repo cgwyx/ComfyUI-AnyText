@@ -290,9 +290,9 @@ class AnyText_Pose_IMG:
         comfy_mask_pos_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "comfy_mask_pos_img.png")
         gr_mask_pose_image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "gr_mask_pos_imgs.png")
         img = node_helpers.pillow(Image.open, image_path)
-        width = img.width
-        height = img.height
-        print("\033[93mInput Resolution(输入图像大小):\033[0m", width, "x", height)
+        # width = img.width
+        # height = img.height
+        width, height = img.size
         output_images = []
         output_masks = []
         w, h = None, None
@@ -333,6 +333,7 @@ class AnyText_Pose_IMG:
         inverted_mask_image = invert_mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1])).movedim(1, -1).expand(-1, -1, -1, 3)
         i = 255. * inverted_mask_image.cpu().numpy()[0]
         img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
+        print("\033[93mInput img Resolution(输入图像分辨率):\033[0m", width, "x", height)
         img.save("custom_nodes\ComfyUI-AnyText\AnyText\comfy_mask_pos_img.png")
 
         return (

@@ -1,4 +1,4 @@
-# Unofficial Simple And Rough Implementation Of AnyText
+# Unofficial Simple And Rough Implementation Of AnyText  |   [中文README](./README-Zh-CN.md)
 
 ## Original Repo:[AnyText: Multilingual Visual Text Generation And Editing](https://github.com/tyxsspa/AnyText)
 
@@ -7,7 +7,7 @@
 ## Instructions:
 
 - works on my pc: win10+torch2.2.1+cu121.
-- **Input image resolution must be multiple of 64.**
+- **Input image resolution must be multiple of 64.** Input image max resolution 768x768 Recmmended.
 - AnyText model will automatically download into "ComfyUI\models\checkpoints\15\anytext_v1.1.safetensors" from huggingface(fp16: 2.66 GB) when first time executing the node if the model file dose not exist.
 - You can download [AnyText-FP32-5.73 GB](https://modelscope.cn/models/iic/cv_anytext_text_generation_editing/file/view/master?fileName=anytext_v1.1.ckpt&status=2) from modelscope,(fp32 5.73 GB).Then put it into **ComfyUI\models\checkpoints\15**.
 - Or manually download [AnyText-FP16-2.66 GB](https://huggingface.co/Sanster/AnyText/blob/main/pytorch_model.fp16.safetensors) from huggingface and rename it to **anytext_v1.1.safetensors**.Then put it into **ComfyUI\models\checkpoints\15**.
@@ -16,11 +16,11 @@
 
 ![](./AnyText/assets/clip_model.jpg)
 
-- A [font-17MB](https://huggingface.co/Sanster/AnyText/blob/main/SourceHanSansSC-Medium.otf) (SourceHanSansSC-Medium.otf) will automatically download into **ComfyUI\models\fonts** from huggingface. It's an essential font that must be in here for check function.
-- If you want to change font, u need to change code in **ComfyUI-AnyText\AnyText\scripts\ms_wrapper.py** line-236.
+- A [font-18MB](https://huggingface.co/Sanster/AnyText/blob/main/SourceHanSansSC-Medium.otf) (SourceHanSansSC-Medium.otf) will automatically download into **ComfyUI\models\fonts** from huggingface. It's an essential font that must be in here for check function.
+- If you want to change font, u need to change code in **ComfyUI-AnyText\AnyText\scripts\ms_wrapper.py** line-236. Replace **"SourceHanSansSC-Medium.otf"** with the name of the font you put into **ComfyUI\models\fonts** (including file extension).
 
 ![](./AnyText/assets/font_dir.jpg)
-
+- **The AnyText model itself is also a standard sd1.5 text2image model.**
 ## Example Prompts:
 
 - An exquisite mug with an ancient Chinese poem engraved on it, including  "花落知多少" and "夜来风雨声" and "处处闻啼鸟" and "春眠不觉晓"
@@ -46,7 +46,7 @@
 
 ### Random_Gen: automatic generate mask as pos_img.
 
-- Automatically generate mask as pos_img based on the number of text-content("string"). With this checked the pos_img input dosen't work.
+- Automatically generate mask as pos_img based on the number of text-content("string"). With this checked the pos_img input dosen't work
 
 ### comfy_mask_pos_img:
 
@@ -55,14 +55,9 @@
 ### gr_mask_pos_img: Not Recommend.
 
 - make a mask with gradio web. U need to execute **ComfyUI-AnyText\AnyText\gr_mask_generator.bat** and open a local webpage(Only text-edit tab works) for generating pos_image.
-- Also u need to modify the **bat** file make it link to the **python.exe** on your pc. Then pip install gradio==3.5.0 module.
+- Also u need to modify the **bat** file make it link to the **python.exe** on your pc. Then install specified version of gradio module with command. x:/xx/xx/python.exe -m pip install gradio==3.5.0.
 
 ![](./AnyText/assets/gr_mask_gen.jpg)
-
-## Extra:
-
-- **The AnyText model itself is also a normal sd1.5 text2image model.**
-
 ## Citation:
 
 **[Repo: tyxsspa/AnyText](https://github.com/tyxsspa/AnyText)**

@@ -333,7 +333,7 @@ class AnyText_Pose_IMG:
         inverted_mask_image = invert_mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1])).movedim(1, -1).expand(-1, -1, -1, 3)
         i = 255. * inverted_mask_image.cpu().numpy()[0]
         img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
-        print("\033[93mInput img Resolution(输入图像分辨率):\033[0m", width, "x", height)
+        print("\033[93mInput img Resolution,Max 768x768 Recmmended(输入图像分辨率,最大建议768x768):\033[0m", width, "x", height)
         img.save("custom_nodes\ComfyUI-AnyText\AnyText\comfy_mask_pos_img.png")
 
         return (

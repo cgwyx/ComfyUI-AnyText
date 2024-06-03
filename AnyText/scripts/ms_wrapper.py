@@ -20,7 +20,7 @@ from t3_dataset import draw_glyph, draw_glyph2
 from .util import check_channels, resize_image, save_images
 from pytorch_lightning import seed_everything
 from modelscope.pipelines import pipeline
-# from modelscope.utils.constant import Tasks
+from modelscope.utils.constant import Tasks
 from modelscope.models.base import TorchModel
 from modelscope.preprocessors.base import Preprocessor
 from modelscope.pipelines.base import Model, Pipeline
@@ -46,7 +46,7 @@ class AnyTextModel(TorchModel):
     def __init__(self, model_dir, *args, **kwargs):
         super().__init__(model_dir, *args, **kwargs)
         self.use_fp16 = kwargs.get('use_fp16', True)
-        self.use_translator = kwargs.get('use_translator', True)
+        self.use_translator = kwargs.get('use_translator', False)
         self.init_model(**kwargs)
 
     '''
@@ -231,13 +231,12 @@ class AnyTextModel(TorchModel):
 
     def init_model(self, **kwargs):
         current_directory = os.path.dirname(folder_paths.models_dir)
-        cfg = os.path.join(current_directory, "custom_nodes\ComfyUI-AnyText\AnyText", "anytext_sd15.yaml")
         if os.access(os.path.join(folder_paths.models_dir, "fonts", "SourceHanSansSC-Medium.otf"), os.F_OK):
             font_path = os.path.join(
                 folder_paths.models_dir, 
                 "fonts", 
-                "SourceHanSansSC-Medium.otf"
-                # "索尼兰亭.ttf"
+                # "SourceHanSansSC-Medium.otf"
+                "索尼兰亭.ttf"
                 # "小篆拼音体.ttf"
                 # "日系筑紫a丸GBK版.ttf"
                 # "Arial-Unicode.ttf"
@@ -246,17 +245,17 @@ class AnyTextModel(TorchModel):
             hf_hub_download(repo_id="Sanster/AnyText", filename="SourceHanSansSC-Medium.otf",local_dir=os.path.join(folder_paths.models_dir, "fonts"))
             font_path = os.path.join(folder_paths.models_dir, "fonts", "SourceHanSansSC-Medium.otf")
         self.font = ImageFont.truetype(font_path, size=60)
-        # cfg_path = os.path.join(folder_paths.models_dir, "checkpoints\ex_ExtraModels\cv_anytext_text_generation_editing","anytext_sd15.yaml")
-        cfg_path = cfg
+        cfg_path = os.path.join(current_directory, "custom_nodes\ComfyUI-AnyText\AnyText", "anytext_sd15.yaml")
         if os.access(os.path.join(folder_paths.models_dir, "checkpoints", "15", "anytext_v1.1.safetensors"), os.F_OK):
             ckpt_path = os.path.join(folder_paths.models_dir, "checkpoints", "15", "anytext_v1.1.safetensors")
         else:
-            # ckpt_path = model_file_download(model_id='damo/cv_anytext_text_generation_editing',file_path='anytext_v1.1.ckpt', cache_dir=os.path.join(folder_paths.models_dir, "checkpoints", "15"))
+            #第一个方法为从魔搭modelscope(https://modelscope.cn/models/iic/cv_anytext_text_generation_editing/)下载v1.1.1版本下FP32版本的anytext_v1.1.ckpt到指定文件夹ComfyUI\models\checkpoints\15。第二个方法从笑脸huggingface(https://huggingface.co/Sanster/AnyText)下载FP16版本的pytorch_model.fp16.safetensors到指定文件夹ComfyUI\models\checkpoints\15，然后重命名为anytext_v1.1.safetensors
+            # ckpt_path = model_file_download(model_id='damo/cv_anytext_text_generation_editing',file_path='anytext_v1.1.ckpt', cache_dir=os.path.join(folder_paths.models_dir, "checkpoints", "15"), revision='v1.1.1')
             hf_hub_download(repo_id="Sanster/AnyText", filename="pytorch_model.fp16.safetensors",local_dir=os.path.join(folder_paths.models_dir, "checkpoints", "15"))
             old_file = os.path.join(folder_paths.models_dir, "checkpoints", "15", "pytorch_model.fp16.safetensors")
             new_file = os.path.join(folder_paths.models_dir, "checkpoints", "15", "anytext_v1.1.safetensors")
             os.rename(old_file, new_file)
-            ckpt_path = os.path.join(folder_paths.models_dir, "checkpoints", "15", "anytext_v1.1.safetensors")
+            ckpt_path = new_file
         if os.access(os.path.join(folder_paths.models_dir, "clip\openai--clip-vit-large-patch14\model.safetensors"), os.F_OK):
             clip_path = os.path.join(folder_paths.models_dir, "clip\openai--clip-vit-large-patch14")
         else:
@@ -268,9 +267,17 @@ class AnyTextModel(TorchModel):
         self.model.eval()
         self.ddim_sampler = DDIMSampler(self.model)
         if self.use_translator:
-            #self.trans_pipe = pipeline(task=Tasks.translation, model=os.path.join(self.model_dir, 'nlp_csanmt_translation_zh2en'))
-            #加载翻译模型，巨大
-            pass
+            #加载中译英模型，模型地址https://modelscope.cn/models/iic/nlp_csanmt_translation_zh2en
+            if os.access(os.path.join(folder_paths.models_dir, "prompt_generator", "nlp_csanmt_translation_zh2en", "tf_ckpts", "ckpt-0.data-00000-of-00001"), os.F_OK):
+                zh2en_path = os.path.join(folder_paths.models_dir, 'prompt_generator', 'nlp_csanmt_translation_zh2en')
+            else:
+                #第一个方法为下载到指定文件夹ComfyUI\models\prompt_generator，第二个方法为下载到C:\Users\username\.cache\modelscope\hub\damo
+                # zh2en_path = snapshot_download(
+                #     'damo/nlp_csanmt_translation_zh2en', 
+                #     cache_dir=os.path.join(folder_paths.models_dir, "prompt_generator"), 
+                #     revision='v1.0.1')
+                zh2en_path = "damo/nlp_csanmt_translation_zh2en"
+            self.trans_pipe = pipeline(task=Tasks.translation, model=zh2en_path)
         else:
             self.trans_pipe = None
 

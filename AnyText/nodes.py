@@ -5,38 +5,19 @@ import folder_paths
 import re
 import torch
 from modelscope.pipelines import pipeline
+from modelscope.utils.constant import Tasks
 import cv2
 import numpy as np
 import node_helpers
 from PIL import Image, ImageOps, ImageSequence
 import hashlib
 import cv2
+from modelscope.hub.snapshot_download import snapshot_download
 
-# os.system("python app.py")
 current_directory = os.path.dirname(os.path.abspath(__file__))
-# img_save_folder = "temp"
-# script_path = os.path.join(current_directory, "app.py")
-# with open(script_path, "r", encoding='UTF-8') as f:
-#         code = f.read()
-# exec(code)
+
 def pil2tensor(image):
     return torch.from_numpy(np.array(image).astype(np.float32) / 255.0).unsqueeze(0)
-
-# def tensor2np(tensor):
-#     img = tensor.mul(255).byte()
-#     img = img.cpu().numpy().squeeze(0).transpose((1, 2, 0))
-#     return img
-
-# def create_canvas(w=512, h=512, c=3, line=5):
-#     image = np.full((h, w, c), 200, dtype=np.uint8)
-#     for i in range(h):
-#         if i % (w//line) == 0:
-#             image[i, :, :] = 150
-#     for j in range(w):
-#         if j % (w//line) == 0:
-#             image[:, j, :] = 150
-#     image[h//2-8:h//2+8, w//2-8:w//2+8, :] = [200, 0, 0]
-#     return image
 
 class AnyText:
   
@@ -45,15 +26,9 @@ class AnyText:
 
     @classmethod
     def INPUT_TYPES(cls):
-        # paths = []
-        # for search_path in folder_paths.get_folder_paths("checkpoints"):
-        #     if os.path.exists(search_path):
-        #         for root, subdir, files in os.walk(search_path, followlinks=True):
-        #             if "configuration.json" in files:
-        #                 paths.append(os.path.relpath(root, start=search_path))
         return {
             "required": {
-                # "font_dir":(os.listdir(os.path.join(folder_paths.models_dir, "fonts")), 'utf-8', ),
+                "font_dir":(os.listdir(os.path.join(folder_paths.models_dir, "fonts")), 'utf-8', ),
                 "prompt": ("STRING", {"default": "A raccoon stands in front of the blackboard with the words \"你好呀~Hello!\" written on it.", "multiline": True}),
                 "a_prompt": ("STRING", {"default": "best quality, extremely detailed,4k, HD, supper legible text,  clear text edges,  clear strokes, neat writing, no watermarks", "multiline": True}),
                 "n_prompt": ("STRING", {"default": "low-res, bad anatomy, extra digit, fewer digits, cropped, worst quality, low quality, watermark, unreadable text, messy words, distorted text, disorganized writing, advertising picture", "multiline": True}),
@@ -63,6 +38,7 @@ class AnyText:
                 "img_count": ("INT", {"default": 1, "min": 1, "max": 10}),
                 "ddim_steps": ("INT", {"default": 20, "min": 1, "max": 100}),
                 "show_debug": ("BOOLEAN", {"default": False}),
+                "use_translator": ("BOOLEAN", {"default": False}),
                 "seed": ("INT", {"default": 9999, "min": -1, "max": 99999999}),
                 "width": ("INT", {"default": 512, "min": 128, "max": 1920, "step": 64}),
                 "height": ("INT", {"default": 512, "min": 128, "max": 1920, "step": 64}),
@@ -101,7 +77,7 @@ class AnyText:
 
     def anytext_process(self,
         mode,
-        # font_dir,
+        font_dir,
         pos_image,
         ori_image,
         sort_radio,
@@ -109,6 +85,7 @@ class AnyText:
         Random_Gen,
         prompt, 
         show_debug, 
+        use_translator,
         img_count, 
         ddim_steps=20, 
         strength=1, 
@@ -186,18 +163,19 @@ class AnyText:
                 raise Exception(f'Failed in auto generate positions after {attempts} attempts, try again!')
             return img
         
-        # for search_path in folder_paths.get_folder_paths("checkpoints"):
-        #     if os.path.exists(search_path):
-        #         path = os.path.join(search_path, model_dir)
-        #         if os.path.exists(path):
-        #             model_path = path
-        #             break
         if width%64 == 0 and height%64 == 0:
             pass
         else:
             raise Exception(f"width and height must be multiple of 64(宽度和高度必须为64的倍数).")
+        font_path = os.path.join(folder_paths.models_dir, "fonts", font_dir)
         path = f"{current_directory}\scripts"
-        pipe = pipeline('my-anytext-task', model=path, use_fp16=True, use_translator=False)
+        if use_translator == True:
+            #如果启用中译英，则提前判断本地是否存在翻译模型，没有则自动下载，以防跑半路报错。
+            if os.access(os.path.join(folder_paths.models_dir, "prompt_generator", "nlp_csanmt_translation_zh2en", "tf_ckpts", "ckpt-0.data-00000-of-00001"), os.F_OK):
+                pass
+            else:
+                snapshot_download('damo/nlp_csanmt_translation_zh2en', revision='v1.0.1')
+        pipe = pipeline('my-anytext-task', model=path, use_fp16=True, use_translator=use_translator)
         n_lines = count_lines(prompt)
         if Random_Gen == True:
             pos_img = generate_rectangles(width, height, n_lines, max_trys=500)
@@ -229,10 +207,12 @@ class AnyText:
                 "draw_pos": pos_img,
                 "ori_image": ori_image,
                 }
+        print("\033[93mImg Resolution<=768x768 Recmmended(图像分辨率,建议<=768x768):", width, "x", height, "\033[0m")
         if show_debug ==True:
+            print("\033[93mFont(字体):", font_dir, "\033[0m")
+            print("\033[93mChinese2English translator(中译英):", use_translator, "\033[0m")
             print("\033[93mBackend scripts location(后端脚本位置):", path, "\033[0m")
             print("\033[93mNumber of text-content to generate(需要生成的文本数量):", n_lines, "\033[0m")
-            print("\033[93mImg Resolution,Max 768x768 Recmmended(图像分辨率,最大建议768x768):", width, "x", height, "\033[0m")
             print("\033[93mpos_image location(遮罩图位置):", pos_image, "\033[0m")
             print("\033[93mori_image location(原图位置):", ori_image, "\033[0m")
             print("\033[93mSort Position(文本生成位置排序):", sort_radio, "\033[0m")
@@ -325,7 +305,7 @@ class AnyText_Pose_IMG:
         inverted_mask_image = invert_mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1])).movedim(1, -1).expand(-1, -1, -1, 3)
         i = 255. * inverted_mask_image.cpu().numpy()[0]
         img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
-        print("\033[93mInput img Resolution,Max 768x768 Recmmended(输入图像分辨率,最大建议768x768):", width, "x", height, "\033[0m")
+        print("\033[93mInput img Resolution<=768x768 Recmmended(输入图像分辨率,建议<=768x768):", width, "x", height, "\033[0m")
         img.save("custom_nodes\ComfyUI-AnyText\AnyText\comfy_mask_pos_img.png")
 
         return (
@@ -349,7 +329,7 @@ class AnyText_Pose_IMG:
         if not folder_paths.exists_annotated_filepath(image):
             return "Invalid image file: {}".format(image)
         return True
-
+        
 # Node class and display name mappings
 NODE_CLASS_MAPPINGS = {
     "AnyText": AnyText,

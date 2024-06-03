@@ -1,38 +1,52 @@
-# AnyText非官方的简单粗糙实现  |   [English README](./README.md)
+# AnyText非官方的简单粗糙实现  |  [English README](../README.md)
 
 ## 原Repo:[AnyText: Multilingual Visual Text Generation And Editing](https://github.com/tyxsspa/AnyText)
 
 ## 警告: 这个插件可能达不到预期。
-
+- 字体选项无效，改字体依然需要改代码。
 ## 使用说明:
 
-- 个人电脑环境: win10+torch2.2.1+cu121.
+- 个人电脑环境: win10+torch2.2.1+cu121+rtx3050laptop(4GB).
 - **输入的图片分辨率必须为64的倍数。** 输入图片建议最大分辨率768x768。
 - 运行本插件节点时，如果本地没有模型文件，会自动从笑脸(huggingface)下载AnyText模型(fp16: 2.66 GB)到"ComfyUI\models\checkpoints\15\anytext_v1.1.safetensors"。
 - 你可以手动从[魔搭(modelscope)-AnyText-FP32-5.73 GB](https://modelscope.cn/models/iic/cv_anytext_text_generation_editing/file/view/master?fileName=anytext_v1.1.ckpt&status=2)下载，然后放到**ComfyUI\models\checkpoints\15**。
 - 或者手动从[笑脸(huggingface)-AnyText-FP16-2.66 GB](https://huggingface.co/Sanster/AnyText/blob/main/pytorch_model.fp16.safetensors) 下载并重命名为**anytext_v1.1.safetensors**。然后放到 **ComfyUI\models\checkpoints\15**。
-- [clip模型-**clip-vit-large-patch14**](https://huggingface.co/openai/clip-vit-large-patch14)会自动下载到 `C:\Users\username\.cache\huggingface\hub`.
-- 可以手动下载[clip模型](https://huggingface.co/openai/clip-vit-large-patch14)并放到**ComfyUI\models\clip**，模型文件夹名必须为**openai--clip-vit-large-patch14**。
-
-![](./AnyText/assets/clip_model.jpg)
-
+- [clip模型-**clip-vit-large-patch14**](https://huggingface.co/openai/clip-vit-large-patch14)会自动下载到 `C:\Users\username\.cache\huggingface\hub`。可以手动下载[clip模型](https://huggingface.co/openai/clip-vit-large-patch14)放到**ComfyUI\models\clip\openai--clip-vit-large-patch14**。![](./assets/clip_model.jpg)
 - 默认字体[font-18MB](https://huggingface.co/Sanster/AnyText/blob/main/SourceHanSansSC-Medium.otf)(SourceHanSansSC-Medium.otf) 会自动从笑脸(huggingface)下载到**ComfyUI\models\fonts**。这个字体必需，因为用它做了判定函数。
 - 如果你想使用自己的字体，需要修改**ComfyUI-AnyText\AnyText\scripts\ms_wrapper.py**第239行，替换里面的SourceHanSansSC-Medium.otf为自己放到**ComfyUI\models\fonts**的字体名字(包括后缀)。
-
-![](./AnyText/assets/font_dir.jpg)
+![](./assets/font_dir.jpg)
+- 使用use_translator中译英会自动从[魔搭modelscope--damo\nlp_csanmt_translation_zh2en--7.3GB](https://www.modelscope.cn/models/iic/nlp_csanmt_translation_zh2en)下载模型到`C:\Users\username\.cache\modelscope\hub\damo`。可以手动从前面链接下载，然后把所有文件放到**ComfyUI\models\prompt_generator\nlp_csanmt_translation_zh2en**![](./assets/zh2en_model.jpg)
 - **AnyText模型本身是一个标准的sd1.5文生图模型。**
 
 ## 示例提示词:
-
+### 文本生成英文提示词：
 - An exquisite mug with an ancient Chinese poem engraved on it, including  "花落知多少" and "夜来风雨声" and "处处闻啼鸟" and "春眠不觉晓"
 - Sign on the clean building that reads "科学" and "과학"  and "ステップ" and "SCIENCE"
 - An ice sculpture is made with the text "Happy" and "Holidays".Dslr photo.
 - A baseball cap with words "要聪明地" and "全力以赴"
 - A nice drawing of octopus, sharks, and boats made by a child with crayons, with the words "神奇海底世界"
-
+### 文本编辑英文提示词
+- A Minion meme that says "wrong"
+- A pile of fruit with "UIT" written in the middle
+- photo of clean sandy beach," " " "
+### 文本生成文提示词：
+- 一个儿童蜡笔画，森林里有一个可爱的蘑菇形状的房子，标题是"森林小屋"
+- 一个精美设计的logo，画的是一个黑白风格的厨师，带着厨师帽，logo下方写着“深夜食堂”
+- 一张户外雪地靴的电商广告，上面写着 “双12大促！”，“立减50”，“加绒加厚”，“穿脱方便”，“温暖24小时送达”， “包邮”，高级设计感，精美构图
+- 一个精致的马克杯，上面雕刻着一首中国古诗，内容是 "花落知多少" "夜来风雨声" "处处闻啼鸟" "春眠不觉晓"
+- 一个漂亮的蜡笔画，有行星，宇航员，还有宇宙飞船，上面写的是"去火星旅行", "王小明", "11月1日"
+- 一个装饰华丽的蛋糕，上面用奶油写着“阿里云”和"APSARA"
+- 一张关于墙上的彩色涂鸦艺术的摄影作品，上面写着“人工智能" 和 "神经网络"
+- 一枚中国古代铜钱,  上面的文字是 "康" "寶" "通" "熙"
+- 精美的书法作品，上面写着“志” “存” “高” “远”
+### 文本编辑文提示词:
+- 一个表情包，小猪说 "下班"
+- 一个中国古代铜钱，上面写着"乾" "隆"
+- 一个黄色标志牌，上边写着"不要" 和 "大意"
+- 一个建筑物前面的字母标牌， 上面写着 " "
 ## 示例工作流:
 
-![workflow](./AnyText/assets/AnyText-wf.png)
+![workflow](./assets/AnyText-wf.png)
 
 ## 部分参数:
 
@@ -55,10 +69,8 @@
 
 ### gr_mask_pos_img: 不建议使用。
 
-- 执行**ComfyUI-AnyText\AnyText\gr_mask_generator.bat**后手动打开一个gradio网页，切换到Text Editing(文字编辑)选项卡，上传图片并生成遮罩。
-- 需要修改**bat**文件以指向用户电脑上的**python.exe**位置，然后使用命令安装gradio指定版本包, x:/xx/xx/python.exe -m pip install gradio==3.5.0。
-
-![](./AnyText/assets/gr_mask_gen.jpg)
+- 执行**ComfyUI-UL\AnyText\gr_mask_generator.bat**后手动打开一个gradio网页，切换到Text Editing(文字编辑)选项卡，上传图片并生成遮罩。
+- 需要修改**bat**文件以指向用户电脑上的**python.exe**位置，然后使用命令安装gradio指定版本包, x:/xx/xx/python.exe -m pip install gradio==3.5.0。![](./assets/gr_mask_gen.jpg)
 
 ## 鸣谢:
 

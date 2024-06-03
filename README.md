@@ -1,6 +1,6 @@
 # Unofficial Simple And Rough Implementation Of AnyText  |  [中文README](./AnyText/README-Zh-CN.md)
 
-## Original Repo:[AnyText: Multilingual Visual Text Generation And Editing](https://github.com/tyxsspa/AnyText)
+## Original Repo: [AnyText: Multilingual Visual Text Generation And Editing](https://github.com/tyxsspa/AnyText)
 
 ## Warning: This custom-node will not work well.
 - Choose font from list dosen't work, change font must modify code.

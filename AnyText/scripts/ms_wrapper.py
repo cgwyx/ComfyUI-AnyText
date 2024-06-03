@@ -235,8 +235,8 @@ class AnyTextModel(TorchModel):
             font_path = os.path.join(
                 folder_paths.models_dir, 
                 "fonts", 
-                # "SourceHanSansSC-Medium.otf"
-                "索尼兰亭.ttf"
+                "SourceHanSansSC-Medium.otf"
+                # "索尼兰亭.ttf"
                 # "小篆拼音体.ttf"
                 # "日系筑紫a丸GBK版.ttf"
                 # "Arial-Unicode.ttf"

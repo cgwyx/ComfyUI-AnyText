@@ -89,7 +89,6 @@ class AnyText_Pose_IMG:
         return {"required":
                     {
                         "image": (sorted(files), {"image_upload": True}),
-                        "seed": ("INT", {"default": 9999, "min": -1, "max": 99999999}),
                         },
                 }
 
@@ -111,7 +110,7 @@ class AnyText_Pose_IMG:
     FUNCTION = "AnyText_Pose_IMG"
     TITLE = "AnyText Pose IMG"
     
-    def AnyText_Pose_IMG(self, image, seed):
+    def AnyText_Pose_IMG(self, image):
         image_path = folder_paths.get_annotated_filepath(image)
         comfy_mask_pos_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "comfy_mask_pos_img.png")
         # gr_mask_pose_image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "gr_mask_pos_imgs.png")
@@ -164,7 +163,7 @@ class AnyText_Pose_IMG:
         i = 255. * inverted_mask_image.cpu().numpy()[0]
         img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
         print("\033[93mInput img Resolution<=768x768 Recommended(输入图像分辨率,建议<=768x768):", width, "x", height, "\033[0m\n")
-        img.save("custom_nodes\ComfyUI-AnyText\AnyText\comfy_mask_pos_img.png")
+        img.save(os.path.join(current_directory,"comfy_mask_pos_img.png"))
 
         return (
             image_path, 

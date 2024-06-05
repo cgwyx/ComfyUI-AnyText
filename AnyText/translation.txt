@@ -1,1 +1,1 @@
-D:\AI\ComfyUI_windows_portable\ComfyUI\models\fonts\Auto_DownLoad|None|openai/clip-vit-large-patch14|D:\AI\ComfyUI_windows_portable\ComfyUI\models\prompt_generator\nlp_csanmt_translation_zh2en
+D:\AI\ComfyUI_windows_portable\ComfyUI\models\fonts\Auto_DownLoad|None|D:\AI\ComfyUI_windows_portable\ComfyUI\models\clip\openai--clip-vit-large-patch14|D:\AI\ComfyUI_windows_portable\ComfyUI\models\prompt_generator\nlp_csanmt_translation_zh2en

@@ -16,10 +16,10 @@ class AnyText_loader:
         checkpoints_list = folder_paths.get_filename_list("checkpoints")
         clip_list = os.listdir(os.path.join(folder_paths.models_dir, "clip"))
         translator_list = os.listdir(os.path.join(folder_paths.models_dir, "prompt_generator"))
-        font_list.insert(0, "None")
-        checkpoints_list.insert(0, "None")
-        clip_list.insert(0, "None")
-        translator_list.insert(0, "None")
+        font_list.insert(0, "Auto_DownLoad")
+        checkpoints_list.insert(0, "Auto_DownLoad")
+        clip_list.insert(0, "Auto_DownLoad")
+        translator_list.insert(0, "Auto_DownLoad")
 
         return {
             "required": {
@@ -58,7 +58,7 @@ class AnyText_loader:
                 translator_path = translator_path_or_repo_id
         
         #将输入参数合并到一个参数里面传递到.nodes
-        loader = (font_path + "|" + ckpt_path + "|" + clip_path + "|" + translator_path)
+        loader = (font_path + "|" + str(ckpt_path) + "|" + clip_path + "|" + translator_path)
         #按|分割
         # loader_s = loader.split("|")
         

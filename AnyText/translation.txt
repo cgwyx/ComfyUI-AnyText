@@ -1,1 +1,1 @@
-Here is a single batch of translated text input. The statement added that Warren's colleagues were shocked and wanted him to turn himself in. Try to enter single-sentence text, and if it's multiple long text, suggest manual clauses, otherwise there may be missed or untranslated translations!!!
+D:\AI\ComfyUI_windows_portable\ComfyUI\models\fonts\索尼兰亭.ttf|None|D:\AI\ComfyUI_windows_portable\ComfyUI\models\clip\openai--clip-vit-large-patch14|D:\AI\ComfyUI_windows_portable\ComfyUI\models\prompt_generator\nlp_csanmt_translation_zh2en

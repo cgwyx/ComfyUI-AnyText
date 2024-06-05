@@ -224,14 +224,14 @@ class AnyTextModel(TorchModel):
 
     def init_model(self, font_path, ckpt_path, clip_path, translator_path, **kwargs):
         current_directory = os.path.dirname(folder_paths.models_dir)
-        if "None" not in font_path:
+        if "Auto_DownLoad" not in font_path:
             font_path = font_path
         else:
             hf_hub_download(repo_id="Sanster/AnyText", filename="SourceHanSansSC-Medium.otf",local_dir=os.path.join(folder_paths.models_dir, "fonts"))
             font_path = os.path.join(folder_paths.models_dir, "fonts", "SourceHanSansSC-Medium.otf")
         self.font = ImageFont.truetype(font_path, size=60)
         cfg_path = os.path.join(current_directory, "custom_nodes\ComfyUI-AnyText\AnyText", "anytext_sd15.yaml")
-        if ckpt_path != None:
+        if ckpt_path != 'None':
             ckpt_path = ckpt_path
         else:
             #第一个方法为从魔搭modelscope(https://modelscope.cn/models/iic/cv_anytext_text_generation_editing/)下载v1.1.1版本下FP32版本的anytext_v1.1.ckpt到指定文件夹ComfyUI\models\checkpoints\15。第二个方法从笑脸huggingface(https://huggingface.co/Sanster/AnyText)下载FP16版本的pytorch_model.fp16.safetensors到指定文件夹ComfyUI\models\checkpoints\15，然后重命名为anytext_v1.1.safetensors
@@ -241,7 +241,7 @@ class AnyTextModel(TorchModel):
             new_file = os.path.join(folder_paths.models_dir, "checkpoints", "15", "anytext_v1.1.safetensors")
             os.rename(old_file, new_file)
             ckpt_path = new_file
-        if "None" not in clip_path:
+        if "Auto_DownLoad" not in clip_path:
             clip_path = clip_path
         else:
             clip_path = "openai/clip-vit-large-patch14"
@@ -254,7 +254,7 @@ class AnyTextModel(TorchModel):
         # if self.use_translator == 'Original':
         if self.use_translator == True:
             #加载中译英模型，模型地址https://modelscope.cn/models/iic/nlp_csanmt_translation_zh2en
-            if "None" not in translator_path:
+            if "Auto_DownLoad" not in translator_path:
                 zh2en_path = translator_path
             else:
                 #第一个方法为下载到指定文件夹ComfyUI\models\prompt_generator，第二个方法为下载到C:\Users\username\.cache\modelscope\hub\damo

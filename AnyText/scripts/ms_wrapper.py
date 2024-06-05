@@ -227,8 +227,11 @@ class AnyTextModel(TorchModel):
         if "Auto_DownLoad" not in font_path:
             font_path = font_path
         else:
-            hf_hub_download(repo_id="Sanster/AnyText", filename="SourceHanSansSC-Medium.otf",local_dir=os.path.join(folder_paths.models_dir, "fonts"))
-            font_path = os.path.join(folder_paths.models_dir, "fonts", "SourceHanSansSC-Medium.otf")
+            if os.access(os.path.join(folder_paths.models_dir, "fonts", "SourceHanSansSC-Medium.otf"), os.F_OK):
+                font_path = os.path.join(folder_paths.models_dir, "fonts", "SourceHanSansSC-Medium.otf")
+            else:
+                hf_hub_download(repo_id="Sanster/AnyText", filename="SourceHanSansSC-Medium.otf",local_dir=os.path.join(folder_paths.models_dir, "fonts"))
+                font_path = os.path.join(folder_paths.models_dir, "fonts", "SourceHanSansSC-Medium.otf")
         self.font = ImageFont.truetype(font_path, size=60)
         cfg_path = os.path.join(current_directory, "custom_nodes\ComfyUI-AnyText\AnyText", "anytext_sd15.yaml")
         if ckpt_path != 'None':
@@ -236,11 +239,14 @@ class AnyTextModel(TorchModel):
         else:
             #第一个方法为从魔搭modelscope(https://modelscope.cn/models/iic/cv_anytext_text_generation_editing/)下载v1.1.1版本下FP32版本的anytext_v1.1.ckpt到指定文件夹ComfyUI\models\checkpoints\15。第二个方法从笑脸huggingface(https://huggingface.co/Sanster/AnyText)下载FP16版本的pytorch_model.fp16.safetensors到指定文件夹ComfyUI\models\checkpoints\15，然后重命名为anytext_v1.1.safetensors
             # ckpt_path = model_file_download(model_id='damo/cv_anytext_text_generation_editing',file_path='anytext_v1.1.ckpt', cache_dir=os.path.join(folder_paths.models_dir, "checkpoints", "15"), revision='v1.1.1')
-            hf_hub_download(repo_id="Sanster/AnyText", filename="pytorch_model.fp16.safetensors",local_dir=os.path.join(folder_paths.models_dir, "checkpoints", "15"))
-            old_file = os.path.join(folder_paths.models_dir, "checkpoints", "15", "pytorch_model.fp16.safetensors")
-            new_file = os.path.join(folder_paths.models_dir, "checkpoints", "15", "anytext_v1.1.safetensors")
-            os.rename(old_file, new_file)
-            ckpt_path = new_file
+            if os.access(os.path.join(folder_paths.models_dir, "checkpoints", "15", "anytext_v1.1.safetensors"), os.F_OK):
+                ckpt_path = os.path.join(folder_paths.models_dir, "checkpoints", "15", "anytext_v1.1.safetensors")
+            else:
+                hf_hub_download(repo_id="Sanster/AnyText", filename="pytorch_model.fp16.safetensors",local_dir=os.path.join(folder_paths.models_dir, "checkpoints", "15"))
+                old_file = os.path.join(folder_paths.models_dir, "checkpoints", "15", "pytorch_model.fp16.safetensors")
+                new_file = os.path.join(folder_paths.models_dir, "checkpoints", "15", "anytext_v1.1.safetensors")
+                os.rename(old_file, new_file)
+                ckpt_path = new_file
         if "Auto_DownLoad" not in clip_path:
             clip_path = clip_path
         else:

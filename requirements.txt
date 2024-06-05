@@ -2,4 +2,5 @@ modelscope
 pillow
 numpy
 torchvision
+#tensorflow
 #gradio==3.50.0 #use gradio web for generating mask image

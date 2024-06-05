@@ -23,7 +23,7 @@ class AnyText:
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "loader": ("loader", {"forceInput": True}),
+                "AnyText_Loader": ("AnyText_Loader", {"forceInput": True}),
                 "prompt": ("STRING", {"default": "A raccoon stands in front of the blackboard with the words \"你好呀~Hello!\" written on it.", "multiline": True}),
                 "a_prompt": ("STRING", {"default": "best quality, extremely detailed,4k, HD, supper legible text,  clear text edges,  clear strokes, neat writing, no watermarks", "multiline": True}),
                 "n_prompt": ("STRING", {"default": "low-res, bad anatomy, extra digit, fewer digits, cropped, worst quality, low quality, watermark, unreadable text, messy words, distorted text, disorganized writing, advertising picture", "multiline": True}),
@@ -73,7 +73,7 @@ class AnyText:
 
     def anytext_process(self,
         mode,
-        loader,
+        AnyText_Loader,
         pos_image,
         ori_image,
         sort_radio,
@@ -167,7 +167,7 @@ class AnyText:
         
         path = f"{current_directory}\scripts"
         
-        loader_out = loader.split("|")
+        loader_out = AnyText_Loader.split("|")
         
         if use_translator == True:#如果启用中译英，则提前判断本地是否存在翻译模型，没有则自动下载，以防跑半路报错。
             if os.access(os.path.join(folder_paths.models_dir, "prompt_generator", "nlp_csanmt_translation_zh2en", "tf_ckpts", "ckpt-0.data-00000-of-00001"), os.F_OK):
@@ -213,7 +213,7 @@ class AnyText:
                 }
         print("\033[93mImg Resolution<=768x768 Recommended(图像分辨率,建议<=768x768):", width, "x", height, "\033[0m\n")
         if show_debug ==True:
-            print("\033[93mloader from .util(从.util输入的loader):", loader, "\033[0m\n")
+            print("\033[93mloader from .util(从.util输入的loader):", AnyText_Loader, "\033[0m\n")
             print("\033[93mloader_out split form loader(分割loader得到4个参数):", loader_out, "\033[0m\n")
             print("\033[93mFont(字体)--loader_out[0],:", loader_out[0], "\033[0m\n")
             print("\033[93mAnyText Model(AnyText模型)--loader_out[1]:", loader_out[1], "\033[0m\n")

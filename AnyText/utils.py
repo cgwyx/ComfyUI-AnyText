@@ -33,8 +33,8 @@ class AnyText_loader:
                 }
             }
 
-    RETURN_TYPES = ("loader", )
-    RETURN_NAMES = ("loader", )
+    RETURN_TYPES = ("AnyText_Loader", )
+    RETURN_NAMES = ("AnyText_Loader", )
     FUNCTION = "AnyText_loader_fn"
     CATEGORY = "ExtraModels/AnyText"
     TITLE = "AnyText Loader"

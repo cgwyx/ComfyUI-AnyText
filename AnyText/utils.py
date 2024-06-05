@@ -45,14 +45,14 @@ class AnyText_loader:
         if clip_path_or_repo_id == "":
             clip_path = os.path.join(folder_paths.models_dir, "clip", clip)
         else:
-            if clip != None:
+            if clip != 'Auto_DownLoad':
                 clip_path = os.path.join(folder_paths.models_dir, "clip", clip)
             else:
                 clip_path = clip_path_or_repo_id
         if translator_path_or_repo_id == "":
             translator_path = os.path.join(folder_paths.models_dir, "prompt_generator", translator)
         else:
-            if translator != None:
+            if translator != 'Auto_DownLoad':
                 translator_path = os.path.join(folder_paths.models_dir, "prompt_generator", translator)
             else:
                 translator_path = translator_path_or_repo_id

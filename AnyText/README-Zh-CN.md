@@ -13,7 +13,8 @@
 - 或者手动从[笑脸(huggingface)-AnyText-FP16-2.66 GB](https://huggingface.co/Sanster/AnyText/blob/main/pytorch_model.fp16.safetensors) 下载并重命名为**anytext_v1.1.safetensors**。然后放到 **ComfyUI\models\checkpoints\15**。
 - [clip模型-**clip-vit-large-patch14**](https://huggingface.co/openai/clip-vit-large-patch14)会自动下载到 `C:\Users\username\.cache\huggingface\hub`。可以手动下载[clip模型](https://huggingface.co/openai/clip-vit-large-patch14)放到**ComfyUI\models\clip\openai--clip-vit-large-patch14**。
 - ![](./assets/clip_model.jpg)
-- 默认字体[font-18MB](https://huggingface.co/Sanster/AnyText/blob/main/SourceHanSansSC-Medium.otf)(SourceHanSansSC-Medium.otf) 会自动从笑脸(huggingface)下载到**ComfyUI\models\fonts**。使用use_translator中译英会自动从[魔搭modelscope--damo\nlp_csanmt_translation_zh2en--7.3GB](https://www.modelscope.cn/models/iic/nlp_csanmt_translation_zh2en)下载模型到`C:\Users\username\.cache\modelscope\hub\damo`。可以手动从前面链接下载，然后把所有文件放到**ComfyUI\models\prompt_generator\nlp_csanmt_translation_zh2en**
+- 默认字体[font-18MB](https://huggingface.co/Sanster/AnyText/blob/main/SourceHanSansSC-Medium.otf)(SourceHanSansSC-Medium.otf) 会自动从笑脸(huggingface)下载到**ComfyUI\models\fonts**。
+- 使用use_translator中译英会自动从[魔搭modelscope--damo\nlp_csanmt_translation_zh2en--7.3GB](https://www.modelscope.cn/models/iic/nlp_csanmt_translation_zh2en)下载模型到`C:\Users\username\.cache\modelscope\hub\damo`。可以手动从前面链接下载，然后把所有文件放到**ComfyUI\models\prompt_generator\nlp_csanmt_translation_zh2en**
 - ![](./assets/zh2en_model.jpg)
 - **AnyText模型本身是一个标准的sd1.5文生图模型。**
 

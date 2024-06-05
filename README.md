@@ -12,8 +12,7 @@
 - You can download [AnyText-FP32-5.73 GB](https://modelscope.cn/models/iic/cv_anytext_text_generation_editing/file/view/master?fileName=anytext_v1.1.ckpt&status=2) from modelscope,(fp32 5.73 GB).Then put it into **ComfyUI\models\checkpoints\15**.
 - Or manually download [AnyText-FP16-2.66 GB](https://huggingface.co/Sanster/AnyText/blob/main/pytorch_model.fp16.safetensors) from huggingface and rename it to **anytext_v1.1.safetensors**.Then put it into **ComfyUI\models\checkpoints\15**.
 - clip model [**clip-vit-large-patch14**](https://huggingface.co/openai/clip-vit-large-patch14) will automatically download into `C:\Users\username\.cache\huggingface\hub`. We can manually download all files from [clip_model](https://huggingface.co/openai/clip-vit-large-patch14) into **ComfyUI\models\clip\openai--clip-vit-large-patch14**![](./AnyText/assets/clip_model.jpg)
-- A [font-18MB](https://huggingface.co/Sanster/AnyText/blob/main/SourceHanSansSC-Medium.otf) (SourceHanSansSC-Medium.otf) will automatically download into **ComfyUI\models\fonts** from huggingface. It's an essential font that must be in here for check function.
-- If you want to change font, u need to change code in **ComfyUI-AnyText\AnyText\scripts\ms_wrapper.py** line-239. Replace **SourceHanSansSC-Medium.otf** with the name of the font you put into **ComfyUI\models\fonts** (including file extension).![](./AnyText/assets/font_dir.jpg)
+- A [font-18MB](https://huggingface.co/Sanster/AnyText/blob/main/SourceHanSansSC-Medium.otf) (SourceHanSansSC-Medium.otf) will automatically download into **ComfyUI\models\fonts** from huggingface.
 - With use_translator checked, translator model [modelscope--damo\nlp_csanmt_translation_zh2en--7.3GB](https://www.modelscope.cn/models/iic/nlp_csanmt_translation_zh2en) will automatically download into `C:\Users\username\.cache\modelscope\hub\damo`. We can maually download translator model from link before, then put all files into **ComfyUI\models\prompt_generator\nlp_csanmt_translation_zh2en**![](./AnyText/assets/zh2en_model.jpg)
 - **The AnyText model itself is also a standard sd1.5 text2image model.**
 ## Example Prompts:
@@ -64,9 +63,6 @@
 
 - make a mask with comfyui.
 
-### gr_mask_pos_img: Not Recommended.(Deprecated)
-- make a mask with gradio web. U need to execute **ComfyUI-UL\AnyText\gr_mask_generator.bat** and open a local webpage(Only text-edit tab works) for generating pos_image.
-- Also u need to modify the **bat** file make it link to the **python.exe** on your pc. Then install specified version of gradio module with command. x:/xx/xx/python.exe -m pip install gradio==3.5.0.![](./AnyText/assets/gr_mask_gen.jpg)
 ## Citation:
 
 **[Repo: tyxsspa/AnyText](https://github.com/tyxsspa/AnyText)**

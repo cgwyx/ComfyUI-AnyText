@@ -8,14 +8,17 @@ import hashlib
 import numpy as np
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
+comfyui_models_dir = folder_paths.models_dir
+comfyui_temp_dir = folder_paths.get_temp_directory()
+temp_txt_path =os.path.join(comfyui_temp_dir, "AnyText_temp.txt")
 
 class AnyText_loader:
     @classmethod
     def INPUT_TYPES(cls):
-        font_list = os.listdir(os.path.join(folder_paths.models_dir, "fonts"))
+        font_list = os.listdir(os.path.join(comfyui_models_dir, "fonts"))
         checkpoints_list = folder_paths.get_filename_list("checkpoints")
-        clip_list = os.listdir(os.path.join(folder_paths.models_dir, "clip"))
-        translator_list = os.listdir(os.path.join(folder_paths.models_dir, "prompt_generator"))
+        clip_list = os.listdir(os.path.join(comfyui_models_dir, "clip"))
+        translator_list = os.listdir(os.path.join(comfyui_models_dir, "prompt_generator"))
         font_list.insert(0, "Auto_DownLoad")
         checkpoints_list.insert(0, "Auto_DownLoad")
         clip_list.insert(0, "Auto_DownLoad")
@@ -40,25 +43,26 @@ class AnyText_loader:
     TITLE = "AnyText Loader"
 
     def AnyText_loader_fn(self, font, ckpt_name, clip, clip_path_or_repo_id, translator, translator_path_or_repo_id, show_debug):
-        font_path = os.path.join(folder_paths.models_dir, "fonts", font)
+        font_path = os.path.join(comfyui_models_dir, "fonts", font)
         ckpt_path = folder_paths.get_full_path("checkpoints", ckpt_name)
+        cfg_path = os.path.join(current_directory, 'models_yaml', 'anytext_sd15.yaml')
         if clip_path_or_repo_id == "":
-            clip_path = os.path.join(folder_paths.models_dir, "clip", clip)
+            clip_path = os.path.join(comfyui_models_dir, "clip", clip)
         else:
             if clip != 'Auto_DownLoad':
-                clip_path = os.path.join(folder_paths.models_dir, "clip", clip)
+                clip_path = os.path.join(comfyui_models_dir, "clip", clip)
             else:
                 clip_path = clip_path_or_repo_id
         if translator_path_or_repo_id == "":
-            translator_path = os.path.join(folder_paths.models_dir, "prompt_generator", translator)
+            translator_path = os.path.join(comfyui_models_dir, "prompt_generator", translator)
         else:
             if translator != 'Auto_DownLoad':
-                translator_path = os.path.join(folder_paths.models_dir, "prompt_generator", translator)
+                translator_path = os.path.join(comfyui_models_dir, "prompt_generator", translator)
             else:
                 translator_path = translator_path_or_repo_id
         
         #将输入参数合并到一个参数里面传递到.nodes
-        loader = (font_path + "|" + str(ckpt_path) + "|" + clip_path + "|" + translator_path)
+        loader = (font_path + "|" + str(ckpt_path) + "|" + clip_path + "|" + translator_path + "|" + cfg_path)
         #按|分割
         # loader_s = loader.split("|")
         
@@ -72,12 +76,12 @@ class AnyText_loader:
             print("\033[93mckpt_path(AnyText模型):", ckpt_path, "\033[0m\n")
             print("\033[93mclip_path(clip模型):", clip_path, "\033[0m\n")
             print("\033[93mtranslator_path(翻译模型):", translator_path, "\033[0m\n")
+            print("\033[93myaml_file(yaml配置文件):", cfg_path, "\033[0m\n")
             
         #将未分割参数写入txt，然后读取传递到到.nodes
-        txt_path =os.path.join(current_directory, "translation.txt")
-        with open(txt_path, "w", encoding="UTF-8") as text_file:
+        with open(temp_txt_path, "w", encoding="UTF-8") as text_file:
             text_file.write(loader)
-        with open(txt_path, "r", encoding="UTF-8") as f:
+        with open(temp_txt_path, "r", encoding="UTF-8") as f:
             return (f.read(), )
         # return (all)
 
@@ -112,7 +116,8 @@ class AnyText_Pose_IMG:
     
     def AnyText_Pose_IMG(self, image):
         image_path = folder_paths.get_annotated_filepath(image)
-        comfy_mask_pos_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "comfy_mask_pos_img.png")
+        # comfy_mask_pos_img_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "comfy_mask_pos_img.png")
+        comfy_mask_pos_img_path = os.path.join(comfyui_temp_dir,  "AnyText_mask_pos_img.png")
         # gr_mask_pose_image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "gr_mask_pos_imgs.png")
         img = node_helpers.pillow(Image.open, image_path)
         # width = img.width
@@ -162,8 +167,9 @@ class AnyText_Pose_IMG:
         inverted_mask_image = invert_mask.reshape((-1, 1, mask.shape[-2], mask.shape[-1])).movedim(1, -1).expand(-1, -1, -1, 3)
         i = 255. * inverted_mask_image.cpu().numpy()[0]
         img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
+        print("\033[93mInput img Resolution<=768x768 Recommended(输入图像分辨率,建议<=768x768):", comfyui_temp_dir, "\033[0m\n")
         print("\033[93mInput img Resolution<=768x768 Recommended(输入图像分辨率,建议<=768x768):", width, "x", height, "\033[0m\n")
-        img.save(os.path.join(current_directory,"comfy_mask_pos_img.png"))
+        img.save(os.path.join(comfyui_temp_dir,  "AnyText_mask_pos_img.png"))
 
         return (
             image_path, 
@@ -208,15 +214,16 @@ class AnyText_translator:
     TITLE = "AnyText中译英-阿里达摩院damo/nlp_csanmt_translation_zh2en"
 
     def AnyText_translator(self, prompt, Batch_prompt, if_Batch, device, Batch_Newline):
-        Batch_prompt = Batch_prompt.split("\n")  # 使用换行(\n)作为分隔符
+        # 使用换行(\n)作为分隔符
+        Batch_prompt = Batch_prompt.split("\n")  
         if if_Batch == True:
             input_sequence = Batch_prompt
             # 用特定的连接符<SENT_SPLIT>，将多个句子进行串联
             input_sequence = '<SENT_SPLIT>'.join(input_sequence)
         else:
             input_sequence = prompt
-        if os.access(os.path.join(folder_paths.models_dir, "prompt_generator", "nlp_csanmt_translation_zh2en", "tf_ckpts", "ckpt-0.data-00000-of-00001"), os.F_OK):
-            zh2en_path = os.path.join(folder_paths.models_dir, 'prompt_generator', 'nlp_csanmt_translation_zh2en')
+        if os.access(os.path.join(comfyui_models_dir, "prompt_generator", "nlp_csanmt_translation_zh2en", "tf_ckpts", "ckpt-0.data-00000-of-00001"), os.F_OK):
+            zh2en_path = os.path.join(comfyui_models_dir, 'prompt_generator', 'nlp_csanmt_translation_zh2en')
         else:
             zh2en_path = "damo/nlp_csanmt_translation_zh2en"
         pipeline_ins = pipeline(task=Tasks.translation, model=zh2en_path, device=device)
@@ -229,10 +236,9 @@ class AnyText_translator:
                 results = ' '.join(results)
         else:
             results = outputs['translation']
-        txt_path =os.path.join(current_directory, "translation.txt")
-        with open(txt_path, "w", encoding="UTF-8") as text_file:
+        with open(temp_txt_path, "w", encoding="UTF-8") as text_file:
             text_file.write(results)
-        with open(txt_path, "r", encoding="UTF-8") as f:
+        with open(temp_txt_path, "r", encoding="UTF-8") as f:
             return (f.read(), )
 
 # Node class and display name mappings

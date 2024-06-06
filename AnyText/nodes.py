@@ -169,12 +169,13 @@ class AnyText:
         
         loader_out = AnyText_Loader.split("|")
         
-        if use_translator == True:#如果启用中译英，则提前判断本地是否存在翻译模型，没有则自动下载，以防跑半路报错。
+        if use_translator == True:
+            #如果启用中译英，则提前判断本地是否存在翻译模型，没有则自动下载，以防跑半路报错。
             if os.access(os.path.join(folder_paths.models_dir, "prompt_generator", "nlp_csanmt_translation_zh2en", "tf_ckpts", "ckpt-0.data-00000-of-00001"), os.F_OK):
                 pass
             else:
                 snapshot_download('damo/nlp_csanmt_translation_zh2en', revision='v1.0.1')
-        pipe = pipeline('my-anytext-task', model=path, font_path=loader_out[0], ckpt_path=loader_out[1], clip_path=loader_out[2], use_fp16=fp16, translator_path=loader_out[3], use_translator=use_translator)
+        pipe = pipeline('my-anytext-task', model=path, font_path=loader_out[0], ckpt_path=loader_out[1], clip_path=loader_out[2], use_fp16=fp16, translator_path=loader_out[3], cfg_path=loader_out[4], use_translator=use_translator)
         n_lines = count_lines(prompt)
         if Random_Gen == True:
             pos_img = generate_rectangles(width, height, n_lines, max_trys=500)
@@ -219,6 +220,7 @@ class AnyText:
             print("\033[93mAnyText Model(AnyText模型)--loader_out[1]:", loader_out[1], "\033[0m\n")
             print("\033[93mclip model(clip模型)--loader_out[2]:", loader_out[2], "\033[0m\n")
             print("\033[93mTranslator(翻译模型)--loader_out[3]:", loader_out[3], "\033[0m\n")
+            print("\033[93myaml_file(yaml配置文件):", loader_out[4], "\033[0m\n")
             print("\033[93mChinese2English translator(中译英):", use_translator, "\033[0m\n")
             print("\033[93mBackend scripts location(后端脚本位置):", path, "\033[0m\n")
             print("\033[93mNumber of text-content to generate(需要生成的文本数量):", n_lines, "\033[0m\n")

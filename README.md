@@ -1,4 +1,4 @@
-# Unofficial Simple And Rough Implementation Of AnyText  |  [中文README](./AnyText/README-Zh-CN.md)
+# Unofficial Simple And Rough Implementation Of AnyText  |  [中文README](./AnyText/assets/README-Zh-CN.md)
 
 ## Original Repo: [AnyText: Multilingual Visual Text Generation And Editing](https://github.com/tyxsspa/AnyText)
 

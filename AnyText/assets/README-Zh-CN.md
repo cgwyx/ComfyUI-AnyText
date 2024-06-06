@@ -1,4 +1,4 @@
-# AnyText非官方的简单粗糙实现  |  [English README](../README.md)
+# AnyText非官方的简单粗糙实现  |  [English README](../../README.md)
 
 ## 原Repo: [AnyText: Multilingual Visual Text Generation And Editing](https://github.com/tyxsspa/AnyText)
 
